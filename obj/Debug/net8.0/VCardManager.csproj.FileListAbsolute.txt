@@ -1,0 +1,14 @@
+/home/manu/software-dev-BeCode/C#/VCardManager/bin/Debug/net8.0/VCardManager
+/home/manu/software-dev-BeCode/C#/VCardManager/bin/Debug/net8.0/VCardManager.deps.json
+/home/manu/software-dev-BeCode/C#/VCardManager/bin/Debug/net8.0/VCardManager.runtimeconfig.json
+/home/manu/software-dev-BeCode/C#/VCardManager/bin/Debug/net8.0/VCardManager.dll
+/home/manu/software-dev-BeCode/C#/VCardManager/bin/Debug/net8.0/VCardManager.pdb
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.GeneratedMSBuildEditorConfig.editorconfig
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.AssemblyInfoInputs.cache
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.AssemblyInfo.cs
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.csproj.CoreCompileInputs.cache
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.dll
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/refint/VCardManager.dll
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.pdb
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.genruntimeconfig.cache
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/ref/VCardManager.dll
