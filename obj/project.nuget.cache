@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "WLT6T/lJhZY=",
+  "dgSpecHash": "VJZnwGMGlII=",
   "success": true,
   "projectFilePath": "/home/manu/software-dev-BeCode/C#/VCardManager/VCardManager.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/manu/.nuget/packages/spectre.console/0.50.0/spectre.console.0.50.0.nupkg.sha512",
+    "/home/manu/.nuget/packages/system.memory/4.6.3/system.memory.4.6.3.nupkg.sha512"
+  ],
   "logs": []
 }

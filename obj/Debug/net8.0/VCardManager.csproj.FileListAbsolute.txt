@@ -12,3 +12,7 @@
 /home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.pdb
 /home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.genruntimeconfig.cache
 /home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/ref/VCardManager.dll
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.sourcelink.json
+/home/manu/software-dev-BeCode/C#/VCardManager/bin/Debug/net8.0/Spectre.Console.dll
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardManager.csproj.AssemblyReference.cache
+/home/manu/software-dev-BeCode/C#/VCardManager/obj/Debug/net8.0/VCardMan.0B9D810F.Up2Date

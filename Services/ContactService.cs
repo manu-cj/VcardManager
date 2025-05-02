@@ -1,6 +1,9 @@
 
 namespace ContactManager.Services;
 using ContactManager.Models;
+using Spectre.Console;
+
+
 public class ContactService
 {
 
@@ -12,72 +15,94 @@ public class ContactService
 
         while (!cancel)
         {
-            Console.Clear();
-            Console.WriteLine("=== CONTACT MANAGER ===");
-            Console.WriteLine("1. Afficher les contacts");
-            Console.WriteLine("2. Ajouter un contact");
-            Console.WriteLine("3. Supprimer un contact");
-            Console.WriteLine("4. Quitter");
-            Console.Write("Choix : ");
-
-            string choice = Console.ReadLine();
+            AnsiConsole.Clear();
+            var choice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("[bold blue]=== CONTACT MANAGER ===[/]\nChoisissez une option :")
+                    .AddChoices(new[]
+                    {
+                    "Afficher les contacts",
+                    "Ajouter un contact",
+                    "Rechercher un contact",
+                    "Exporter un contact",
+                    "Supprimer un contact",
+                    "Quitter"
+                    }));
 
             switch (choice)
             {
-                case "1":
+                case "Afficher les contacts":
                     getContact();
                     break;
-                case "2":
+                case "Ajouter un contact":
                     addContact();
                     break;
-                case "3":
+                case "Rechercher un contact":
                     searchContact();
                     break;
-                case "4":
+                case "Exporter un contact":
                     exportContact();
                     break;
-                case "5":
+                case "Supprimer un contact":
                     deleteContact();
                     break;
-                case "6":
+                case "Quitter":
                     cancel = true;
-                    Console.WriteLine("Au revoir !");
-                    break;
-                default:
-                    Console.WriteLine("Choix invalide.");
+                    AnsiConsole.MarkupLine("[green]Au revoir ![/]");
                     break;
             }
 
             if (!cancel)
             {
-                Console.WriteLine("\nAppuyez sur une touche pour revenir au menu...");
+                AnsiConsole.MarkupLine("\n[grey]Appuyez sur une touche pour revenir au menu...[/]");
                 Console.ReadKey();
             }
         }
     }
 
+
     // Create a method to display the list of contacts
     public void getContact()
     {
-        Console.WriteLine("=== Liste des contacts ===");
-        string filename = "Data/contacts.vcf";
-        FileService fileService = new FileService(filename);
+        var filename = "Data/contacts.vcf";
+        var fileService = new FileService(filename);
         contacts = fileService.LoadContacts();
+
         if (contacts == null || contacts.Count == 0)
         {
-            Console.WriteLine("Aucun contact trouvé.");
+            AnsiConsole.MarkupLine("[bold red]❌ Aucun contact trouvé.[/]");
             return;
         }
-        
-        Console.WriteLine("=== Résultats de la recherche ===");
-        Console.WriteLine($"Nombre de contacts trouvés : {contacts.Count}");
-        Console.WriteLine("=== Liste des contacts ===");
+
+        var table = new Table();
+
+        table.Border = TableBorder.Rounded;
+        table.BorderColor(Color.Cyan1);
+        table.Expand();
+
+        table.AddColumn(new TableColumn("[yellow bold]👤 Nom[/]").Centered());
+        table.AddColumn(new TableColumn("[green bold]📧 Email[/]").Centered());
+        table.AddColumn(new TableColumn("[blue bold]📞 Téléphone[/]").Centered());
+
         foreach (var contact in contacts)
         {
-            Console.WriteLine($"Nom: {contact.Name}, Email: {contact.Email}, Téléphone: {contact.Phone}");
+            table.AddRow(
+                $"[yellow]{contact.Name}[/]",
+                $"[green]{contact.Email}[/]",
+                $"[blue]{contact.Phone}[/]"
+            );
         }
-        Console.WriteLine("=== Fin de la liste ===");
+
+        var panel = new Panel(table)
+            .Header("[bold underline deepskyblue1]📋 Liste des contacts[/]", Justify.Center)
+            .Border(BoxBorder.Double)
+            .BorderStyle(new Style(Color.Purple))
+            .Padding(1, 1);
+
+        AnsiConsole.Write(panel);
     }
+
+
 
     // Create a method to add a contact
     public void addContact()
@@ -85,10 +110,16 @@ public class ContactService
         Console.WriteLine("=== Ajouter un contact ===");
         Console.Write("Nom: ");
         string name = Console.ReadLine();
+        // Validate the name
+        InputValidator.ValidateName(name);
         Console.Write("Email: ");
         string email = Console.ReadLine();
+        // Validate the email
+        InputValidator.ValidateEmail(email);
         Console.Write("Téléphone: ");
         string phone = Console.ReadLine();
+        // Validate the phone number
+        InputValidator.ValidatePhone(phone);
 
         // Check if the contact already exists
         if (contacts.Any(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
@@ -112,18 +143,18 @@ public class ContactService
         Console.WriteLine("=== Supprimer un contact ===");
         Console.Write("email du contact à supprimer: ");
         string email = Console.ReadLine();
+        // Validate the email
+        InputValidator.ValidateEmail(email);
 
-        Contact contactToRemove = contacts.FirstOrDefault(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        Console.Write("Nom du fichier (avec extension .vcf): ");
+        string filename = Console.ReadLine();
+        // Validate the filename
+        InputValidator.ValidateFilename(filename);
 
-        if (contactToRemove != null)
-        {
-            contacts.Remove(contactToRemove);
-            Console.WriteLine("Contact supprimé avec succès.");
-        }
-        else
-        {
-            Console.WriteLine("Contact non trouvé.");
-        }
+        FileService fileService = new FileService("Data" + filename);
+        fileService.DeleteContact(email);
+        contacts = fileService.LoadContacts();
+        Console.WriteLine("Contact supprimé avec succès.");
     }
 
     // Create a method to search for a contact
@@ -132,37 +163,40 @@ public class ContactService
         Console.WriteLine("=== Rechercher un contact ===");
         Console.Write("Nom ou email: ");
         string searchTerm = Console.ReadLine();
+        // Validate the search term
+        InputValidator.ValidateSearchTerm(searchTerm);
 
-        var foundContacts = contacts.Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || c.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-
-        if (foundContacts.Count > 0)
-        {
-            Console.WriteLine("=== Résultats de la recherche ===");
-            foreach (var contact in foundContacts)
-            {
-                Console.WriteLine($"Nom: {contact.Name}, Email: {contact.Email}, Téléphone: {contact.Phone}");
-            }
-        }
-        else
+        FileService fileService = new FileService("Data/contacts.vcf");
+        contacts = fileService.SearchContacts(searchTerm);
+        if (contacts == null || contacts.Count == 0)
         {
             Console.WriteLine("Aucun contact trouvé.");
+            return;
         }
+        Console.WriteLine("=== Résultats de la recherche ===");
+        Console.WriteLine($"Nombre de contacts trouvés : {contacts.Count}");
+        foreach (var contact in contacts)
+        {
+            Console.WriteLine($"Nom: {contact.Name}, Email: {contact.Email}, Téléphone: {contact.Phone}");
+        }
+        Console.WriteLine("=== Fin de la recherche ===");
     }
 
     // Create a method to export contacts to a file
     public void exportContact()
     {
-        Console.WriteLine("=== Exporter les contacts ===");
-        Console.Write("Nom du fichier (avec extension .vcf): ");
-         string filename = Console.ReadLine();
-        if (string.IsNullOrEmpty(filename) || !filename.EndsWith(".vcf"))
-        {
-            Console.WriteLine("Nom de fichier invalide. Veuillez entrer un nom de fichier valide avec l'extension .vcf.");
-            return;
-        }
+        Console.WriteLine("=== Exporter le contacts ===");
+        Console.Write("Email du contact à exporter: ");
+        string email = Console.ReadLine();
+        // Validate the email
+        InputValidator.ValidateEmail(email);
+
+        Console.Write("Nom du fichier: ");
+        string filename = Console.ReadLine();
+
         // Save the contacts to a file
-        FileService fileService = new FileService("Data" + filename);
-        fileService.SaveContacts(contacts);
+        FileService fileService = new FileService("Data/contacts.vcf");
+        fileService.ExportContact(filename, email);
         Console.WriteLine("Contacts exportés avec succès.");
     }
 }
